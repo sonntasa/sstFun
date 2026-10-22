@@ -4,11 +4,26 @@
 \alias{intSSRT}
 \title{intSSRT}
 \usage{
-intSSRT(dat, replace_slow = TRUE)
+intSSRT(
+  dat,
+  participant = id,
+  trial_type = trial_type,
+  corr = corr,
+  ssd = ssd,
+  rt = rt,
+  slow = slow,
+  replace_slow = TRUE
+)
 }
 \arguments{
 \item{dat}{a dataframe containing vp number, rt, accuracy, the conditions
 and stop-signal delays}
+
+\item{corr}{boolean that reflects wether the current trial is Correct}
+
+\item{ssd}{Name of the column containing the current stop signal delay}
+
+\item{rt}{Reaction times}
 
 \item{replace_slow}{boolean that indicates whether slow values should be
 raplaced with the slowest correct RT, to correct distribution (see
@@ -17,12 +32,6 @@ Verbruggen et al., 2019)}
 \item{vp_num}{Name of the column containing the vp identifier.}
 
 \item{type}{the column that reflects the current trial type (stop vs. go)}
-
-\item{corr}{boolean that reflects wether the current trial is Correct}
-
-\item{ssd}{Name of the column containing the current stop signal delay}
-
-\item{rt}{Reaction times}
 }
 \value{
 a dataframe containing the vp identifier, an estimate of the SSRT,

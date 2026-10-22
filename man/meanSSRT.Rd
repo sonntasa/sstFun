@@ -4,21 +4,31 @@
 \alias{meanSSRT}
 \title{meanSSRT}
 \usage{
-meanSSRT(dat, RTexc = FALSE, RTmin = 100, RTmax = 600)
+meanSSRT(
+  dat,
+  participant = id,
+  trial_type = trial_type,
+  corr = corr,
+  ssd = ssd,
+  rt = rt,
+  RTexc = FALSE,
+  RTmin = 100,
+  RTmax = 600
+)
 }
 \arguments{
 \item{dat}{a dataframe containing vp number, rt, accuracy, the conditions
 and stop-signal delays}
 
-\item{vp_num}{Name of the column containing the vp identifier.}
-
-\item{type}{the column that reflects the current trial type (stop vs. go)}
+\item{participant}{Name of the column containing the participant identifier.}
 
 \item{corr}{boolean that reflects wether the current trial is Correct}
 
 \item{ssd}{Name of the column containing the current stop signal delay}
 
 \item{rt}{Reaction times}
+
+\item{type}{the column that reflects the current trial type (stop vs. go)}
 }
 \value{
 a dataframe containing an estimate of the SSRT, the mean reaction

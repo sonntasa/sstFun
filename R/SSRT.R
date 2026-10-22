@@ -9,7 +9,7 @@
 #'
 #' @param dat a dataframe containing vp number, rt, accuracy, the conditions
 #' and stop-signal delays
-#' @param vp_num Name of the column containing the vp identifier.
+#' @param participant Name of the column containing the participant identifier.
 #' @param type the column that reflects the current trial type (stop vs. go)
 #' @param corr boolean that reflects wether the current trial is Correct
 #' @param ssd Name of the column containing the current stop signal delay
@@ -19,23 +19,31 @@
 #' @examples dat <- meanSSRT(dat)
 #' @export
 meanSSRT <- function(
-    dat,
-    RTexc = FALSE,
-    RTmin = 100,
-    RTmax = 600) {
+  dat,
+  participant = id,
+  trial_type = trial_type,
+  corr = corr,
+  ssd = ssd,
+  rt = rt,
+  RTexc = FALSE,
+  RTmin = 100,
+  RTmax = 600
+) {
   if (RTexc) {
-    dat <- dat %>% filter(between(rt, RTmin, RTmax))
+    dat <- dat |> dplyr::filter(between({{ rt }}, RTmin, RTmax))
   }
   return(
     merge(
-      dat[dat$type == "go", ] %>%
-        group_by(vp_num) %>%
-        summarise(meanRT = round(mean(rt))),
-      dat[dat$type == "stop", ] %>%
-        group_by(vp_num) %>%
-        summarise(meanSSD = round(mean(ssd))),
-      by = "vp_num"
-    ) %>% mutate(SSRT = meanRT - meanSSD)
+      dat |>
+        dplyr::filter({{ trial_type }} == "go") |>
+        group_by({{ participant }}) |>
+        summarise(meanRT = round(mean({{ rt }}))),
+      dat |>
+        dplyr::filter({{ trial_type }} == "stop") |>
+        group_by() |>
+        summarise(meanSSD = round(mean({{ ssd }}))),
+      by = {{ participant }}
+    ) |> mutate(SSRT = meanRT - meanSSD)
   )
 }
 
@@ -63,41 +71,43 @@ meanSSRT <- function(
 #' @examples dat <- intSSRT(dat)
 #' @export
 intSSRT <- function(
-    dat,
-    replace_slow = TRUE) {
-  if (mean((dat$ssd + dat$rt) / 2) < abs(mean(dat$ssd) - mean(dat$rt))) {
-    warning("Are Reaction times and SSDs both in ms?")
-  }
-
+  dat,
+  participant = id,
+  trial_type = trial_type,
+  corr = corr,
+  ssd = ssd,
+  rt = rt,
+  slow = slow,
+  replace_slow = TRUE
+) {
   if (replace_slow) {
-    for (vp_num in unique(dat$vp_num)) {
-      dat$rt[dat$vp_num == vp_num & dat$slow] <-
-        max(dat$rt[dat$vp_num == vp_num & !dat$slow])
-    }
-  }
-
-  dat_SSRT <- data.frame(
-    vp_num = integer(),
-    nthRT = integer(),
-    meanSSD = integer(),
-    pResp = numeric()
-  )
-
-  for (vp_num in unique(dat$vp_num)) {
-    pResp <- mean(dat$corr[dat$vp_num == vp_num & dat$type == "stop"])
-    GoRTs <- sort(dat$rt[dat$vp_num == vp_num & dat$type == "go"])
-    nthRT <- GoRTs[as.integer(pResp * length(GoRTs))]
-    dat_SSRT <-
-      rbind(
-        dat_SSRT,
-        data.frame(
-          vp_num = vp_num,
-          nthRT = round(nthRT),
-          meanSSD = round(mean(dat$ssd[dat$vp_num == vp_num])),
-          pResp = round(pResp * 100, 1)
+    dat <- dat |>
+      dplyr::group_by({{ participant }}) |>
+      dplyr::mutate(
+        {{ rt }} := ifelse(
+          test = {{ slow }},
+          yes = max({{ rt }}[!{{ slow }} & {{ trial_type }} == "go"], na.rm = TRUE),
+          no = {{ rt }}
         )
-      )
+      ) |>
+      dplyr::ungroup()
   }
-  dat_SSRT <- dat_SSRT %>% mutate(SSRT = nthRT - meanSSD)
+
+  dat_SSRT <- dat |>
+    dplyr::group_by({{ participant }}) |>
+    dplyr::summarise(
+      pResp   = mean(!{{ corr }}[{{ trial_type }} == "stop"]),
+      meanSSD = mean({{ ssd }}[{{ trial_type }} == "stop"], na.rm = TRUE),
+      nGOs    = sum({{ trial_type }} == "go"),
+      nthRT   = sort({{ rt }}[{{ trial_type }} == "go"])[max(1L, as.integer(pResp * nGOs))],
+      .groups = "drop"
+    ) |>
+    dplyr::mutate(
+      pResp   = round(pResp * 100, 2),
+      meanSSD = round(meanSSD),
+      nGOs    = nGOs,
+      nthRT   = round(nthRT),
+      SSRT    = nthRT - meanSSD
+    )
   return(dat_SSRT)
 }
