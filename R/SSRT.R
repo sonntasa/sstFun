@@ -36,14 +36,13 @@ meanSSRT <- function(
     merge(
       dat |>
         dplyr::filter({{ trial_type }} == "go") |>
-        group_by({{ participant }}) |>
-        summarise(meanRT = round(mean({{ rt }}))),
+        dplyr::group_by({{ participant }}) |>
+        dplyr::summarise(meanRT = round(mean({{ rt }}))),
       dat |>
         dplyr::filter({{ trial_type }} == "stop") |>
-        group_by() |>
-        summarise(meanSSD = round(mean({{ ssd }}))),
-      by = {{ participant }}
-    ) |> mutate(SSRT = meanRT - meanSSD)
+        dplyr::group_by({{ participant }}) |>
+        dplyr::summarise(meanSSD = round(mean({{ ssd }}))),
+    ) |> dplyr::mutate(SSRT = meanRT - meanSSD)
   )
 }
 
