@@ -17,12 +17,12 @@
 #'   trial_type = "stop",
 #'   ssd = c(100, 150, 200, 150, 100, 150, 200, 150)
 #' )
-#' mid_run_avg(dat, participant = id, type = trial_type, ssd = ssd)
-#' mid_run_avg(dat, participant = id, type = trial_type, ssd = ssd, every_second = FALSE)
+#' mid_run_avg(dat, participant = id, trial_type = trial_type, ssd = ssd)
+#' mid_run_avg(dat, participant = id, trial_type = trial_type, ssd = ssd, every_second = FALSE)
 #' @export
 mid_run_avg <- function(dat,
                         participant = id,
-                        type = trial_type,
+                        trial_type = trial_type,
                         ssd = ssd,
                         stop_value = "stop",
                         every_second = TRUE) {
@@ -47,7 +47,7 @@ mid_run_avg <- function(dat,
       run_avg = dplyr::if_else(use_run, ({{ ssd }} + dplyr::lead({{ ssd }})) / 2, NA_real_)
     ) |>
     dplyr::summarise(
-      "mid-run estimate" = mean(run_avg, na.rm = TRUE),
-      n_runs             = sum(!is.na(run_avg))
+      mid_run_estimate = mean(run_avg, na.rm = TRUE),
+      n_runs = sum(!is.na(run_avg))
     ))
 }
