@@ -3,7 +3,7 @@
 #' @description Estimates the SSD with the mid-run estimates method (Levitt, 1971;
 #' Wetherill & Levitt, 1965).
 #'
-#' @param dat a dataframe containing id, ssd, type
+#' @param dat a dataframe containing id, ssd, trial_type
 #' @param participant Name of the column containing the participant identifier.
 #' @param type the column that reflects the current trial type (stop vs. go)
 #' @param ssd Name of the column containing the current stop signal delay
@@ -28,7 +28,7 @@ mid_run_avg <- function(dat,
                         every_second = TRUE) {
   return(dat |>
     dplyr::group_by({{ participant }}) |>
-    dplyr::filter({{ type }} == stop_value) |>
+    dplyr::filter({{ trial_type }} == stop_value) |>
     dplyr::filter(is.na({{ ssd }} - dplyr::lag({{ ssd }})) | {{ ssd }} != dplyr::lag({{ ssd }})) |>
     dplyr::mutate(
       step_in = {{ ssd }} - dplyr::lag({{ ssd }}),
