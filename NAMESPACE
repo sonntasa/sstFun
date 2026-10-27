@@ -2,5 +2,6 @@
 
 export(intSSRT)
 export(meanSSRT)
+export(mid_run_avg)
 import(dplyr)
 import(magrittr)
