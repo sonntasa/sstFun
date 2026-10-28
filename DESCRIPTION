@@ -6,6 +6,7 @@ Authors@R: c(
     person(given = "Ian G", family = "Mackenzie", email="ian.mackenzie@uni-tuebingen.de", role = c("aut"))
     )
 Description: Helper functions for estimating both SSRT and SSD in a Stop-Signal Task
+License: MIT + file LICENSE
 Version: 1.0
 RoxygenNote: 7.3.3
 Encoding: UTF-8
