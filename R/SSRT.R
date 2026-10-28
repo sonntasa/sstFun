@@ -102,9 +102,9 @@ meanSSRT <- function(
 #' @importFrom rlang :=
 #' @import dplyr
 #' @import cli
-#' @param dat a dataframe containing vp number, rt, accuracy, the conditions
+#' @param dat a dataframe containing id number, rt, accuracy, the conditions
 #'  and stop-signal delays
-#' @param participant Name of the column containing the vp identifier.
+#' @param participant Name of the column containing the personal identifier.
 #' @param trial_type the column that reflects the current trial type (stop vs. go)
 #' @param corr boolean that reflects wether the current trial is Correct
 #' @param RTmax maximum RT boundary to determine slow responses
@@ -115,7 +115,7 @@ meanSSRT <- function(
 #'  Verbruggen et al., 2019)
 #' @param mid_run boolean wether the mid-run average should be used to compute
 #'  the SSD
-#' @return a dataframe containing the vp identifier, an estimate of the SSRT,
+#' @return a dataframe containing the id, an estimate of the SSRT,
 #'  nth reaction time, used to compute the SSRT, the mean Stop Signal delay,
 #'  the p(response | signal) and the estimated SSRT.
 #' @examples
