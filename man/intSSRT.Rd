@@ -17,10 +17,10 @@ intSSRT(
 )
 }
 \arguments{
-\item{dat}{a dataframe containing vp number, rt, accuracy, the conditions
+\item{dat}{a dataframe containing id number, rt, accuracy, the conditions
 and stop-signal delays}
 
-\item{participant}{Name of the column containing the vp identifier.}
+\item{participant}{Name of the column containing the personal identifier.}
 
 \item{trial_type}{the column that reflects the current trial type (stop vs. go)}
 
@@ -40,7 +40,7 @@ Verbruggen et al., 2019)}
 the SSD}
 }
 \value{
-a dataframe containing the vp identifier, an estimate of the SSRT,
+a dataframe containing the id, an estimate of the SSRT,
  nth reaction time, used to compute the SSRT, the mean Stop Signal delay,
  the p(response | signal) and the estimated SSRT.
 }
