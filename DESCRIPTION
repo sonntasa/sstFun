@@ -5,13 +5,10 @@ Authors@R: c(
     person(given = "Carolin", family = "Dudschig", email="carolin.dudschig@uni-tuebingen.de", role = c("aut")),
     person(given = "Ian G", family = "Mackenzie", email="ian.mackenzie@uni-tuebingen.de", role = c("aut"))
     )
-Author: Samuel Sonntag [aut, cre],
-  Carolin Dudschig [aut],
-  Ian G. Mackenzie [aut]
-Maintainer: Samuel Sonntag <samuel@samuel-sonntag.de>
 Description: Helper functions for estimating both SSRT and SSD in a Stop-Signal Task
 License: MIT + file LICENSE
 Version: 1.0
 RoxygenNote: 7.3.3
 Encoding: UTF-8
-Depends: R (>= 4.1.0), rlang, cli, dplyr
+Depends: R (>= 4.1.0), rlang
+Imports: cli, dplyr
