@@ -15,4 +15,4 @@ License: MIT + file LICENSE
 RoxygenNote: 7.3.3
 Encoding: UTF-8
 Depends: R (>= 4.1.0), rlang
-Imports: cli, dplyr
+Imports: cli, dplyr, utils
