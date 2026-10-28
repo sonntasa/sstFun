@@ -6,7 +6,7 @@
 #' @import cli
 #' @param dat a dataframe containing id, ssd, trial_type
 #' @param participant Name of the column containing the participant identifier.
-#' @param type the column that reflects the current trial type (stop vs. go)
+#' @param trial_type the column that reflects the current trial type (stop vs. go)
 #' @param ssd Name of the column containing the current stop signal delay
 #' @param stop_value prevents silent failing, coding of stop trials
 #' @param every_second boolean use every second run or use all (full) runs

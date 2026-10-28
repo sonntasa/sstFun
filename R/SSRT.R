@@ -107,7 +107,7 @@ meanSSRT <- function(
 #' @param participant Name of the column containing the vp identifier.
 #' @param trial_type the column that reflects the current trial type (stop vs. go)
 #' @param corr boolean that reflects wether the current trial is Correct
-#' @param slow boolean that reflects wether the current trial is Slow
+#' @param RTmax maximum RT boundary to determine slow responses
 #' @param ssd Name of the column containing the current stop signal delay
 #' @param rt Reaction times
 #' @param replace_slow boolean that indicates whether slow values should be
