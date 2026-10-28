@@ -54,12 +54,11 @@ dat <- data.frame(
   id = 1,
   trial_type = rep(c("go", "stop"), c(60, 20)),
   corr = c(rep(TRUE, 60), rep(c(TRUE, FALSE), 10)),
-  slow = rep(c(FALSE, TRUE, FALSE), c(57, 3, 20)),
   ssd = c(rep(NA, 60), rep(c(100, 150, 200, 150), 5)),
   rt = c(round(rnorm(60, 500, 80)), rep(NA, 20))
 )
 intSSRT(dat,
   participant = id, trial_type = trial_type, corr = corr,
-  ssd = ssd, rt = rt, slow = slow, mid_run = FALSE
+  ssd = ssd, rt = rt, mid_run = FALSE
 )
 }
