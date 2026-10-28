@@ -3,6 +3,8 @@
 #' @description Estimates the SSRT with the mean method: mean go RT minus the
 #'  mean SSD. This assumes that p(response | signal) = 0.5.
 #' @importFrom rlang :=
+#' @import dplyr
+#' @import cli
 #' @param dat a dataframe with one row per trial.
 #' @param participant column containing the participant identifier.
 #' @param trial_type column containing the trial type ("go" vs. "stop").
@@ -98,6 +100,8 @@ meanSSRT <- function(
 #' @description utilises the RT distribution of go trials in a
 #'  Stop-Signal task to estimate the Stop-Signal Reaction Time
 #' @importFrom rlang :=
+#' @import dplyr
+#' @import cli
 #' @param dat a dataframe containing vp number, rt, accuracy, the conditions
 #'  and stop-signal delays
 #' @param participant Name of the column containing the vp identifier.

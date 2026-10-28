@@ -3,4 +3,6 @@
 export(intSSRT)
 export(meanSSRT)
 export(mid_run_avg)
+import(cli)
+import(dplyr)
 importFrom(rlang,":=")

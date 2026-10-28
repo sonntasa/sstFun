@@ -2,7 +2,8 @@
 #'
 #' @description Estimates the SSD with the mid-run estimates method (Levitt, 1971;
 #' Wetherill & Levitt, 1965).
-#'
+#' @import dplyr
+#' @import cli
 #' @param dat a dataframe containing id, ssd, trial_type
 #' @param participant Name of the column containing the participant identifier.
 #' @param type the column that reflects the current trial type (stop vs. go)
