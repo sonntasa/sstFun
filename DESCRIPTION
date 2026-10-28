@@ -1,6 +1,12 @@
 Package: sstFun
 Title: Stop-Signal Reaction Time Calculation
-Description: Calculation the SSRT for a Stop-Signal Task either via mean estimation of integration.
+Authors@R: c(
+    person(given = "Samuel", family = "Sonntag", email="samuel.sonntag@uni-tuebingen.de", role = c("cre", "aut")),
+    person(given = "Carolin", family = "Dudschig", email="carolin.dudschig@uni-tuebingen.de", role = c("aut"))
+    person(given = "Ian G", family = "Mackenzie", email="ian.mackenzie@uni-tuebingen.de", role = c("aut")),
+    )
+Description: Helper functions for estimating both SSRT and SSD in a Stop-Signal Task
 Version: 1.0
 RoxygenNote: 7.3.3
 Encoding: UTF-8
+Depends: R (>= 4.1.0)
