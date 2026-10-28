@@ -18,13 +18,13 @@ mid_run_avg(
 
 \item{participant}{Name of the column containing the participant identifier.}
 
+\item{trial_type}{the column that reflects the current trial type (stop vs. go)}
+
 \item{ssd}{Name of the column containing the current stop signal delay}
 
 \item{stop_value}{prevents silent failing, coding of stop trials}
 
 \item{every_second}{boolean use every second run or use all (full) runs}
-
-\item{type}{the column that reflects the current trial type (stop vs. go)}
 }
 \value{
 a dataframe containing an estimate of the SSD and the number of runs

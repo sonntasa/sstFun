@@ -34,10 +34,10 @@ and stop-signal delays}
 raplaced with the slowest correct RT, to correct distribution (see
 Verbruggen et al., 2019)}
 
+\item{RTmax}{maximum RT boundary to determine slow responses}
+
 \item{mid_run}{boolean wether the mid-run average should be used to compute
 the SSD}
-
-\item{slow}{boolean that reflects wether the current trial is Slow}
 }
 \value{
 a dataframe containing the vp identifier, an estimate of the SSRT,
