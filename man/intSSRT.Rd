@@ -11,13 +11,18 @@ intSSRT(
   corr = corr,
   ssd = ssd,
   rt = rt,
-  slow = slow,
-  replace_slow = TRUE
+  replace_slow = TRUE,
+  RTmax = 600,
+  mid_run = TRUE
 )
 }
 \arguments{
 \item{dat}{a dataframe containing vp number, rt, accuracy, the conditions
 and stop-signal delays}
+
+\item{participant}{Name of the column containing the vp identifier.}
+
+\item{trial_type}{the column that reflects the current trial type (stop vs. go)}
 
 \item{corr}{boolean that reflects wether the current trial is Correct}
 
@@ -29,19 +34,32 @@ and stop-signal delays}
 raplaced with the slowest correct RT, to correct distribution (see
 Verbruggen et al., 2019)}
 
-\item{vp_num}{Name of the column containing the vp identifier.}
+\item{mid_run}{boolean wether the mid-run average should be used to compute
+the SSD}
 
-\item{type}{the column that reflects the current trial type (stop vs. go)}
+\item{slow}{boolean that reflects wether the current trial is Slow}
 }
 \value{
 a dataframe containing the vp identifier, an estimate of the SSRT,
-nth reaction time, used to compute the SSRT, the mean Stop Signal delay,
-the p(response | signal) and the estimated SSRT.
+ nth reaction time, used to compute the SSRT, the mean Stop Signal delay,
+ the p(response | signal) and the estimated SSRT.
 }
 \description{
-utilises the RT distribution of correct Go Trials in a
-Stop-Signal task to estimate the Stop-Signal Reaction Time
+utilises the RT distribution of go trials in a
+ Stop-Signal task to estimate the Stop-Signal Reaction Time
 }
 \examples{
-dat <- intSSRT(dat)
+set.seed(1)
+dat <- data.frame(
+  id = 1,
+  trial_type = rep(c("go", "stop"), c(60, 20)),
+  corr = c(rep(TRUE, 60), rep(c(TRUE, FALSE), 10)),
+  slow = rep(c(FALSE, TRUE, FALSE), c(57, 3, 20)),
+  ssd = c(rep(NA, 60), rep(c(100, 150, 200, 150), 5)),
+  rt = c(round(rnorm(60, 500, 80)), rep(NA, 20))
+)
+intSSRT(dat,
+  participant = id, trial_type = trial_type, corr = corr,
+  ssd = ssd, rt = rt, slow = slow, mid_run = FALSE
+)
 }

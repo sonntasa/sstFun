@@ -43,8 +43,28 @@ meanSSRT <- function(
   RTmax = 600,
   mid_run = TRUE
 ) {
-  by_col <- rlang::as_name(rlang::enquo(participant))
+  cols <- c(
+    participant = rlang::as_name(rlang::enquo(participant)),
+    trial_type  = rlang::as_name(rlang::enquo(trial_type)),
+    corr        = rlang::as_name(rlang::enquo(corr)),
+    ssd         = rlang::as_name(rlang::enquo(ssd)),
+    rt          = rlang::as_name(rlang::enquo(rt))
+  )
 
+  if (!is.data.frame(dat)) {
+    cli::cli_abort("{.arg dat} must be a data frame, not {.cls {class(dat)}}.")
+  }
+
+  missing <- cols[!cols %in% names(dat)]
+  if (length(missing) > 0) {
+    rlang::abort(c(
+      "Column(s) not found in `dat`.",
+      x = paste0("`", names(missing), "` -> `", missing, "`"),
+      i = paste("Available:", paste(names(dat), collapse = ", "))
+    ))
+  }
+
+  by_col <- rlang::as_name(rlang::enquo(participant))
   dat_mid_run <- mid_run_avg(
     dat,
     participant = {{ participant }},
@@ -116,10 +136,31 @@ intSSRT <- function(
   corr = corr,
   ssd = ssd,
   rt = rt,
-  slow = slow,
   replace_slow = TRUE,
+  RTmax = 600,
   mid_run = TRUE
 ) {
+  cols <- c(
+    participant = rlang::as_name(rlang::enquo(participant)),
+    trial_type  = rlang::as_name(rlang::enquo(trial_type)),
+    corr        = rlang::as_name(rlang::enquo(corr)),
+    ssd         = rlang::as_name(rlang::enquo(ssd)),
+    rt          = rlang::as_name(rlang::enquo(rt))
+  )
+
+  if (!is.data.frame(dat)) {
+    cli::cli_abort("{.arg dat} must be a data frame, not {.cls {class(dat)}}.")
+  }
+
+  missing <- cols[!cols %in% names(dat)]
+  if (length(missing) > 0) {
+    rlang::abort(c(
+      "Column(s) not found in `dat`.",
+      x = paste0("`", names(missing), "` -> `", missing, "`"),
+      i = paste("Available:", paste(names(dat), collapse = ", "))
+    ))
+  }
+
   by_col <- rlang::as_name(rlang::enquo(participant))
   dat_mid_run <- mid_run_avg(
     dat,
@@ -130,11 +171,18 @@ intSSRT <- function(
 
   if (replace_slow) {
     dat <- dat |>
+      dplyr::mutate(
+        slow = dplyr::if_else(
+          condition = {{ rt }} > RTmax & {{ trial_type }} == "go",
+          true      = TRUE,
+          false     = FALSE
+        )
+      ) |>
       dplyr::group_by({{ participant }}) |>
       dplyr::mutate(
         {{ rt }} := dplyr::if_else(
-          condition = {{ slow }},
-          true      = max({{ rt }}[!{{ slow }} & {{ trial_type }} == "go" & {{ corr }}], na.rm = TRUE),
+          condition = slow,
+          true      = max({{ rt }}[!slow & {{ trial_type }} == "go" & {{ corr }}], na.rm = TRUE),
           false     = {{ rt }}
         )
       ) |>

@@ -13,32 +13,51 @@ meanSSRT(
   rt = rt,
   RTexc = FALSE,
   RTmin = 100,
-  RTmax = 600
+  RTmax = 600,
+  mid_run = TRUE
 )
 }
 \arguments{
-\item{dat}{a dataframe containing vp number, rt, accuracy, the conditions
-and stop-signal delays}
+\item{dat}{a dataframe with one row per trial.}
 
-\item{participant}{Name of the column containing the participant identifier.}
+\item{participant}{column containing the participant identifier.}
 
-\item{corr}{boolean that reflects wether the current trial is Correct}
+\item{trial_type}{column containing the trial type ("go" vs. "stop").}
 
-\item{ssd}{Name of the column containing the current stop signal delay}
+\item{corr}{logical column, `TRUE` if the trial was correct.}
 
-\item{rt}{Reaction times}
+\item{ssd}{column containing the stop-signal delay.}
 
-\item{type}{the column that reflects the current trial type (stop vs. go)}
+\item{rt}{column containing the reaction times.}
+
+\item{RTexc}{logical; if `TRUE`, go trials with RTs outside
+`[RTmin, RTmax]` are excluded from the mean go RT.}
+
+\item{RTmin, RTmax}{bounds of the RT window used when `RTexc = TRUE`.}
+
+\item{mid_run}{logical; if `TRUE`, the mid-run SSD estimate is subtracted
+from the mean go RT, otherwise the mean SSD. The mid-run estimate is
+returned either way.}
 }
 \value{
-a dataframe containing an estimate of the SSRT, the mean reaction
-times on go trials and the mean stop signal delay for each VP
+a dataframe with one row per participant: `meanRT`, `meanSSD`,
+ `mid_run_estimate`, `n_runs` and `SSRT`.
 }
 \description{
-Estimates the SSRT using the mean of all SSDs in the
-experiment. This calculation hinges upon the assumption that p(response |
-signal = 0.5)
+Estimates the SSRT with the mean method: mean go RT minus the
+ mean SSD. This assumes that p(response | signal) = 0.5.
 }
 \examples{
-dat <- meanSSRT(dat)
+set.seed(1)
+dat <- data.frame(
+  id = 1,
+  trial_type = rep(c("go", "stop"), c(60, 20)),
+  corr = c(rep(TRUE, 60), rep(c(TRUE, FALSE), 10)),
+  ssd = c(rep(NA, 60), rep(c(100, 150, 200, 150), 5)),
+  rt = c(round(rnorm(60, 500, 80)), rep(NA, 20))
+)
+meanSSRT(dat,
+  participant = id, trial_type = trial_type, corr = corr,
+  ssd = ssd, rt = rt
+)
 }

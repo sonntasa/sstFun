@@ -26,6 +26,25 @@ mid_run_avg <- function(dat,
                         ssd = ssd,
                         stop_value = "stop",
                         every_second = TRUE) {
+  cols <- c(
+    participant = rlang::as_name(rlang::enquo(participant)),
+    trial_type  = rlang::as_name(rlang::enquo(trial_type)),
+    ssd         = rlang::as_name(rlang::enquo(ssd))
+  )
+
+  if (!is.data.frame(dat)) {
+    cli::cli_abort("{.arg dat} must be a data frame, not {.cls {class(dat)}}.")
+  }
+
+  missing <- cols[!cols %in% names(dat)]
+  if (length(missing) > 0) {
+    rlang::abort(c(
+      "Column(s) not found in `dat`.",
+      x = paste0("`", names(missing), "` -> `", missing, "`"),
+      i = paste("Available:", paste(names(dat), collapse = ", "))
+    ))
+  }
+
   return(dat |>
     dplyr::group_by({{ participant }}) |>
     dplyr::filter({{ trial_type }} == stop_value) |>
