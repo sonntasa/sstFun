@@ -15,7 +15,7 @@ from the RT distribution using p(response | signal); in cases where p(response
 
 ---
 
-# SSD Calculation
+## SSD Calculation
 
 The Stop Signal Delay can be calculated as either the mean Value of all SSDs, or, more robustly,
 using the mid-run estimates method which is more suited to Staircase paradigms. This method
