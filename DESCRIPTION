@@ -7,10 +7,10 @@ Authors@R: c(
     person(given = "Carolin", family = "Dudschig", email="carolin.dudschig@uni-tuebingen.de", role = c("aut"), comment = c(ORCID = "0000-0002-7041-7798")),
     person(given = "Ian G", family = "Mackenzie", email="ian.mackenzie@uni-tuebingen.de", role = c("aut"), comment = c(ORCID = "0000-0001-8950-9601"))
     )
-Description: Helper functions for estimating the SSRT in a Stop-Signal Task 
-  based on Verbruggen et al. (2019) <doi:10.7554/eLife.46323>
-  and a mid-run estimates method for computing the mean SSD based on Levitt
-  (1970) <doi:10.1121/1.1912375>.
+Description: Helper functions for estimating the SSRT (stop signal reaction 
+  time) in a Stop-Signal Task based on Verbruggen et al. (2019)
+  <doi:10.7554/eLife.46323> and a mid-run estimates method for computing the
+  mean SSD (stop signal delay) based on Levitt (1971) <doi:10.1121/1.1912375>.
 Maintainer: Samuel Sonntag <samuel.sonntag@uni-tuebingen.de>
 License: MIT + file LICENSE
 Roxygen: list(markdown = TRUE)

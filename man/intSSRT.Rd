@@ -2,7 +2,7 @@
 % Please edit documentation in R/SSRT.R
 \name{intSSRT}
 \alias{intSSRT}
-\title{intSSRT}
+\title{Integration Method of computing the SSRT}
 \usage{
 intSSRT(
   dat,
@@ -24,29 +24,33 @@ and stop-signal delays}
 
 \item{trial_type}{the column that reflects the current trial type (stop vs. go)}
 
-\item{corr}{boolean that reflects wether the current trial is Correct}
+\item{corr}{boolean that reflects whether the current trial is Correct}
 
 \item{ssd}{Name of the column containing the current stop signal delay}
 
 \item{rt}{Reaction times}
 
 \item{replace_slow}{boolean that indicates whether slow values should be
-raplaced with the slowest correct RT, to correct distribution (see
+replaced with the slowest correct RT, to correct distribution (see
 Verbruggen et al., 2019)}
 
 \item{RTmax}{maximum RT boundary to determine slow responses}
 
-\item{mid_run}{boolean wether the mid-run average should be used to compute
+\item{mid_run}{boolean whether the mid-run average should be used to compute
 the SSD}
 }
 \value{
 a dataframe containing the id, an estimate of the SSRT,
- nth reaction time, used to compute the SSRT, the mean Stop Signal delay,
- the p(response | signal) and the estimated SSRT.
+nth reaction time, used to compute the SSRT, the mean Stop Signal delay,
+the p(response | signal), the mid-run estimate of the SSD, the number of
+runs that went into the estimation of the SSD and the estimated SSRT.
 }
 \description{
 utilises the RT distribution of go trials in a
- Stop-Signal task to estimate the Stop-Signal Reaction Time
+Stop-Signal task to estimate the Stop-Signal Reaction Time using the
+distribution of go-trials (with replacement of go-omissions) and the
+probability of giving a response when a signal is present for each
+participant (see Verbruggen et al., 2019).
 }
 \examples{
 set.seed(1)

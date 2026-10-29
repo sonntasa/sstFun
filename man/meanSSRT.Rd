@@ -2,7 +2,7 @@
 % Please edit documentation in R/SSRT.R
 \name{meanSSRT}
 \alias{meanSSRT}
-\title{meanSSRT}
+\title{Mean Estimation of the SSRT}
 \usage{
 meanSSRT(
   dat,
@@ -12,6 +12,8 @@ meanSSRT(
   ssd = ssd,
   rt = rt,
   RTexc = FALSE,
+  RTrep = FALSE,
+  ErrExc = FALSE,
   RTmin = 100,
   RTmax = 600,
   mid_run = TRUE
@@ -24,28 +26,34 @@ meanSSRT(
 
 \item{trial_type}{column containing the trial type ("go" vs. "stop").}
 
-\item{corr}{logical column, `TRUE` if the trial was correct.}
+\item{corr}{logical column, \code{TRUE} if the trial was correct.}
 
 \item{ssd}{column containing the stop-signal delay.}
 
 \item{rt}{column containing the reaction times.}
 
-\item{RTexc}{logical; if `TRUE`, go trials with RTs outside
-`[RTmin, RTmax]` are excluded from the mean go RT.}
+\item{RTexc}{logical; if \code{TRUE}, go trials with RTs outside
+\verb{[RTmin, RTmax]} are excluded from the mean go RT.}
 
-\item{RTmin, RTmax}{bounds of the RT window used when `RTexc = TRUE`.}
+\item{RTrep}{logical; if \code{TRUE}, go-omissions are replaced with the
+RTmax value.}
 
-\item{mid_run}{logical; if `TRUE`, the mid-run SSD estimate is subtracted
+\item{ErrExc}{logical; if \code{TRUE}, incorrect trials are excluded from the
+analysis}
+
+\item{RTmin, RTmax}{bounds of the RT window used when \code{RTexc = TRUE}.}
+
+\item{mid_run}{logical; if \code{TRUE}, the mid-run SSD estimate is subtracted
 from the mean go RT, otherwise the mean SSD. The mid-run estimate is
 returned either way.}
 }
 \value{
-a dataframe with one row per participant: `meanRT`, `meanSSD`,
- `mid_run_estimate`, `n_runs` and `SSRT`.
+a dataframe with one row per participant: \code{meanRT}, \code{meanSSD},
+\code{mid_run_estimate}, \code{n_runs} and \code{SSRT}.
 }
 \description{
 Estimates the SSRT with the mean method: mean go RT minus the
- mean SSD. This assumes that p(response | signal) = 0.5.
+mean SSD. This assumes that p(response | signal) = 0.5.
 }
 \examples{
 set.seed(1)

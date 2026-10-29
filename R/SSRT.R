@@ -1,4 +1,4 @@
-#' @title Mean estimation of the SSRT
+#' @title Mean Estimation of the SSRT
 #'
 #' @description Estimates the SSRT with the mean method: mean go RT minus the
 #'  mean SSD. This assumes that p(response | signal) = 0.5.
@@ -13,7 +13,7 @@
 #' @param rt column containing the reaction times.
 #' @param RTexc logical; if `TRUE`, go trials with RTs outside
 #'  `[RTmin, RTmax]` are excluded from the mean go RT.
-#' @param RTrep logical; if `TRUE`, go go-omissions are replaced with the
+#' @param RTrep logical; if `TRUE`, go-omissions are replaced with the
 #'  RTmax value.
 #' @param ErrExc logical; if `TRUE`, incorrect trials are excluded from the
 #'  analysis
@@ -83,7 +83,7 @@ meanSSRT <- function(
   if (RTrep) {
     dat <- dat |> dplyr::mutate(
       {{ rt }} := dplyr::if_else(
-        condition = is.na({{ rt }}),
+        condition = is.na({{ rt }}) & {{ trial_type }} == "go",
         true      = RTmax,
         false     = {{ rt }}
       )
@@ -126,7 +126,7 @@ meanSSRT <- function(
     )
 }
 
-#' @title integration method of computing the SSRT
+#' @title Integration Method of computing the SSRT
 #'
 #' @description utilises the RT distribution of go trials in a
 #'  Stop-Signal task to estimate the Stop-Signal Reaction Time using the
@@ -210,10 +210,10 @@ intSSRT <- function(
   if (replace_slow) {
     dat <- dat |>
       dplyr::mutate(
-        slow = dplyr::if_else(
-          condition = {{ rt }} > RTmax & {{ trial_type }} == "go" | is.na({{ rt }})[{{ trial_type }} == "go"],
-          true      = TRUE,
-          false     = FALSE
+        slow = dplyr::case_when(
+          {{ trial_type }} == "go" & {{ rt }} > RTmax ~ TRUE,
+          {{ trial_type }} == "go" & is.na({{ rt }}) ~ TRUE,
+          TRUE ~ FALSE
         )
       ) |>
       dplyr::group_by({{ participant }}) |>
@@ -232,7 +232,7 @@ intSSRT <- function(
     dplyr::summarise(
       pResp   = mean(!{{ corr }}[{{ trial_type }} == "stop"], na.rm = TRUE),
       meanSSD = mean({{ ssd }}[{{ trial_type }} == "stop"], na.rm = TRUE),
-      nGOs    = sum({{ trial_type }} == "go"),
+      nGOs    = sum({{ trial_type }} == "go", na.rm = TRUE),
       nthRT   = sort({{ rt }}[{{ trial_type }} == "go"])[max(1L, round(pResp * nGOs))],
       .groups = "drop"
     )

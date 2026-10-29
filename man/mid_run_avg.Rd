@@ -2,7 +2,7 @@
 % Please edit documentation in R/SSD.R
 \name{mid_run_avg}
 \alias{mid_run_avg}
-\title{mid_run_avg}
+\title{mid-run average estimation of the SSD}
 \usage{
 mid_run_avg(
   dat,
@@ -31,14 +31,15 @@ a dataframe containing an estimate of the SSD and the number of runs
 used to calculate the SSD
 }
 \description{
-Estimates the SSD with the mid-run estimates method (Levitt, 1971;
-Wetherill & Levitt, 1965).
+Estimates the SSD with the mid-run estimates method
+(Levitt, 1971; Wetherill & Levitt, 1965). To this end, the average mid-point
+of every second run is used (per participant) to compute the average SSD.
 }
 \examples{
 dat <- data.frame(
   id = 1,
   trial_type = "stop",
-  ssd = c(100, 150, 200, 150, 100, 150, 200, 150)
+  ssd = rep(c(100, 150, 200, 150, 100), 10)
 )
 mid_run_avg(dat, participant = id, trial_type = trial_type, ssd = ssd)
 mid_run_avg(dat, participant = id, trial_type = trial_type, ssd = ssd, every_second = FALSE)
