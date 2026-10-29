@@ -1,4 +1,4 @@
-#' @title meanSSRT
+#' @title Mean estimation of the SSRT
 #'
 #' @description Estimates the SSRT with the mean method: mean go RT minus the
 #'  mean SSD. This assumes that p(response | signal) = 0.5.
@@ -13,6 +13,10 @@
 #' @param rt column containing the reaction times.
 #' @param RTexc logical; if `TRUE`, go trials with RTs outside
 #'  `[RTmin, RTmax]` are excluded from the mean go RT.
+#' @param RTrep logical; if `TRUE`, go go-omissions are replaced with the
+#'  RTmax value.
+#' @param ErrExc logical; if `TRUE`, incorrect trials are excluded from the
+#'  analysis
 #' @param RTmin,RTmax bounds of the RT window used when `RTexc = TRUE`.
 #' @param mid_run logical; if `TRUE`, the mid-run SSD estimate is subtracted
 #'  from the mean go RT, otherwise the mean SSD. The mid-run estimate is
@@ -41,6 +45,8 @@ meanSSRT <- function(
   ssd = ssd,
   rt = rt,
   RTexc = FALSE,
+  RTrep = FALSE,
+  ErrExc = FALSE,
   RTmin = 100,
   RTmax = 600,
   mid_run = TRUE
@@ -57,11 +63,11 @@ meanSSRT <- function(
     cli::cli_abort("{.arg dat} must be a data frame, not {.cls {class(dat)}}.")
   }
 
-  missing <- cols[!cols %in% names(dat)]
-  if (length(missing) > 0) {
+  bad_cols <- cols[!cols %in% names(dat)]
+  if (length(bad_cols) > 0) {
     rlang::abort(c(
       "Column(s) not found in `dat`.",
-      x = paste0("`", names(missing), "` -> `", missing, "`"),
+      x = paste0("`", names(bad_cols), "` -> `", bad_cols, "`"),
       i = paste("Available:", paste(names(dat), collapse = ", "))
     ))
   }
@@ -74,12 +80,37 @@ meanSSRT <- function(
     ssd         = {{ ssd }}
   )
 
+  if (RTrep) {
+    dat <- dat |> dplyr::mutate(
+      {{ rt }} := dplyr::if_else(
+        condition = is.na({{ rt }}),
+        true      = RTmax,
+        false     = {{ rt }}
+      )
+    )
+  }
+
+  if (RTexc) {
+    dat <- dat |> dplyr::mutate(
+      {{ rt }} := dplyr::case_when(
+        {{ trial_type }} == "stop" ~ {{ rt }},
+        {{ rt }} > RTmax ~ NA_integer_,
+        {{ rt }} < RTmin ~ NA_integer_,
+        TRUE ~ {{ rt }}
+      )
+    )
+  }
+
+  if (ErrExc) {
+    dat <- dat |> dplyr::filter({{ trial_type }} == "stop" | {{ corr }})
+  }
+
   dat |>
     dplyr::group_by({{ participant }}) |>
     dplyr::summarise(
       meanRT = mean(
-        {{ rt }}[{{ trial_type }} == "go" &
-          (!RTexc | dplyr::between({{ rt }}, RTmin, RTmax))]
+        {{ rt }}[{{ trial_type }} == "go"],
+        na.rm = TRUE
       ),
       meanSSD = mean({{ ssd }}[{{ trial_type }} == "stop"], na.rm = TRUE),
       .groups = "drop"
@@ -95,10 +126,13 @@ meanSSRT <- function(
     )
 }
 
-#' @title intSSRT
+#' @title integration method of computing the SSRT
 #'
 #' @description utilises the RT distribution of go trials in a
-#'  Stop-Signal task to estimate the Stop-Signal Reaction Time
+#'  Stop-Signal task to estimate the Stop-Signal Reaction Time using the
+#'  distribution of go-trials (with replacement of go-omissions) and the
+#'  probability of giving a response when a signal is present for each
+#'  participant (see Verbruggen et al., 2019).
 #' @importFrom rlang :=
 #' @import dplyr
 #' @import cli
@@ -106,18 +140,19 @@ meanSSRT <- function(
 #'  and stop-signal delays
 #' @param participant Name of the column containing the personal identifier.
 #' @param trial_type the column that reflects the current trial type (stop vs. go)
-#' @param corr boolean that reflects wether the current trial is Correct
+#' @param corr boolean that reflects whether the current trial is Correct
 #' @param RTmax maximum RT boundary to determine slow responses
 #' @param ssd Name of the column containing the current stop signal delay
 #' @param rt Reaction times
 #' @param replace_slow boolean that indicates whether slow values should be
-#'  raplaced with the slowest correct RT, to correct distribution (see
+#'  replaced with the slowest correct RT, to correct distribution (see
 #'  Verbruggen et al., 2019)
-#' @param mid_run boolean wether the mid-run average should be used to compute
+#' @param mid_run boolean whether the mid-run average should be used to compute
 #'  the SSD
 #' @return a dataframe containing the id, an estimate of the SSRT,
 #'  nth reaction time, used to compute the SSRT, the mean Stop Signal delay,
-#'  the p(response | signal) and the estimated SSRT.
+#'  the p(response | signal), the mid-run estimate of the SSD, the number of
+#'  runs that went into the estimation of the SSD and the estimated SSRT.
 #' @examples
 #' set.seed(1)
 #' dat <- data.frame(
@@ -155,11 +190,11 @@ intSSRT <- function(
     cli::cli_abort("{.arg dat} must be a data frame, not {.cls {class(dat)}}.")
   }
 
-  missing <- cols[!cols %in% names(dat)]
-  if (length(missing) > 0) {
+  bad_cols <- cols[!cols %in% names(dat)]
+  if (length(bad_cols) > 0) {
     rlang::abort(c(
       "Column(s) not found in `dat`.",
-      x = paste0("`", names(missing), "` -> `", missing, "`"),
+      x = paste0("`", names(bad_cols), "` -> `", bad_cols, "`"),
       i = paste("Available:", paste(names(dat), collapse = ", "))
     ))
   }
@@ -176,7 +211,7 @@ intSSRT <- function(
     dat <- dat |>
       dplyr::mutate(
         slow = dplyr::if_else(
-          condition = {{ rt }} > RTmax & {{ trial_type }} == "go",
+          condition = {{ rt }} > RTmax & {{ trial_type }} == "go" | is.na({{ rt }})[{{ trial_type }} == "go"],
           true      = TRUE,
           false     = FALSE
         )

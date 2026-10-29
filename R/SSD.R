@@ -1,7 +1,8 @@
-#' @title mid_run_avg
+#' @title mid-run average estimation of the SSD
 #'
-#' @description Estimates the SSD with the mid-run estimates method (Levitt, 1971;
-#' Wetherill & Levitt, 1965).
+#' @description Estimates the SSD with the mid-run estimates method
+#' (Levitt, 1971; Wetherill & Levitt, 1965). To this end, the average mid-point
+#' of every second run is used (per participant) to compute the average SSD.
 #' @import dplyr
 #' @import cli
 #' @param dat a dataframe containing id, ssd, trial_type
@@ -16,7 +17,7 @@
 #' dat <- data.frame(
 #'   id = 1,
 #'   trial_type = "stop",
-#'   ssd = c(100, 150, 200, 150, 100, 150, 200, 150)
+#'   ssd = rep(c(100, 150, 200, 150, 100), 10)
 #' )
 #' mid_run_avg(dat, participant = id, trial_type = trial_type, ssd = ssd)
 #' mid_run_avg(dat, participant = id, trial_type = trial_type, ssd = ssd, every_second = FALSE)
@@ -37,11 +38,11 @@ mid_run_avg <- function(dat,
     cli::cli_abort("{.arg dat} must be a data frame, not {.cls {class(dat)}}.")
   }
 
-  missing <- cols[!cols %in% names(dat)]
-  if (length(missing) > 0) {
+  bad_cols <- cols[!cols %in% names(dat)]
+  if (length(bad_cols) > 0) {
     rlang::abort(c(
       "Column(s) not found in `dat`.",
-      x = paste0("`", names(missing), "` -> `", missing, "`"),
+      x = paste0("`", names(bad_cols), "` -> `", bad_cols, "`"),
       i = paste("Available:", paste(names(dat), collapse = ", "))
     ))
   }
